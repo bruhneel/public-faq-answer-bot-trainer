@@ -56,10 +56,40 @@ def test_lora_initialization_training_and_roundtrip(tmp_path):
     torch.testing.assert_close(restored(input_ids).logits, model(input_ids).logits, atol=0, rtol=0)
 
 
-# Milestone 3: Build a Streamlit interface where users can ask questions and get answers.
-@pytest.mark.skip(reason="remove this line when you start milestone 3")
-def test_milestone_3():
-    raise NotImplementedError("write the test for milestone 3")
+def test_generation_with_download_free_model():
+    import torch
+    from tokenizers import Tokenizer
+    from tokenizers.models import WordLevel
+    from tokenizers.pre_tokenizers import Whitespace
+    from transformers import GPT2Config, GPT2LMHeadModel, PreTrainedTokenizerFast
+
+    from app.llm import generate_answer
+
+    torch.set_num_threads(1)
+    torch.manual_seed(42)
+    backend = Tokenizer(WordLevel({"[UNK]": 0, "[EOS]": 1, "[PAD]": 2, "fee": 3}, unk_token="[UNK]"))
+    backend.pre_tokenizer = Whitespace()
+    tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend, unk_token="[UNK]",
+                                       eos_token="[EOS]", pad_token="[PAD]")
+    model = GPT2LMHeadModel(GPT2Config(vocab_size=4, n_positions=128, n_embd=16, n_layer=1, n_head=2,
+                                      eos_token_id=1, pad_token_id=2))
+    a = generate_answer(model, tokenizer, "Which fee?", max_new_tokens=3)
+    assert isinstance(a, str) and len(a.split()) <= 3
+    assert a == generate_answer(model, tokenizer, "Which fee?", max_new_tokens=3)
+
+
+def test_streamlit_renders_without_adapter(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    from streamlit.testing.v1 import AppTest
+
+    entry = Path("app/main.py").resolve()
+    monkeypatch.chdir(tmp_path)
+    page = AppTest.from_file(str(entry)).run()
+    assert not page.exception
+    assert page.title[0].value == "Public FAQ Answer Bot Trainer"
+    assert "python -m app.train" in page.info[0].value
+    assert page.button[0].disabled
 
 
 # Milestone 4: Verify the accuracy and relevance of the generated answers.

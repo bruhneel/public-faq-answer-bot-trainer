@@ -77,3 +77,38 @@ def encode_faq(tokenizer, row) -> tuple[list[int], list[int]]:
 
     answer = tokenizer.encode(row.answer, add_special_tokens=False)
     return encode_answer(prompt_ids(tokenizer, row.question), answer, tokenizer.eos_token_id)
+
+
+def load_adapted(path):
+    """Load the public base and attach the saved adapter."""
+    from app.storage import apply_adapter, read_adapter
+
+    config, weights = read_adapter(path)
+    model, tokenizer = load_base(config.base_model)
+    return apply_adapter(model, config, weights), tokenizer
+
+
+def generate_answer(
+    model, tokenizer, question: str, *, max_new_tokens: int = 48, temperature: float = 0.0
+) -> str:
+    """Decode only the generated answer, using greedy sampling at temperature zero."""
+    import math
+
+    import torch
+
+    if max_new_tokens < 1 or not math.isfinite(temperature) or temperature < 0:
+        raise ValueError("Use a positive token budget and a finite, nonnegative temperature.")
+    ids = torch.tensor([prompt_ids(tokenizer, question)], dtype=torch.long)
+    max_context = model.config.max_position_embeddings
+    if ids.shape[1] + max_new_tokens > max_context:
+        raise ValueError("The question and answer budget exceed this model's context window.")
+    options = {"temperature": temperature} if temperature > 0 else {}
+    model.eval()
+    with torch.inference_mode():
+        output = model.generate(
+            input_ids=ids, attention_mask=torch.ones_like(ids), max_new_tokens=max_new_tokens,
+            do_sample=temperature > 0, pad_token_id=tokenizer.pad_token_id,
+            eos_token_id=tokenizer.eos_token_id, **options,
+        )
+    answer = tokenizer.decode(output[0, ids.shape[1]:], skip_special_tokens=True)
+    return answer.split("### Question:", 1)[0].strip()
