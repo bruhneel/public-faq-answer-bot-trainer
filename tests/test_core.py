@@ -1,6 +1,4 @@
 """Regression tests for the FAQ training pipeline."""
-import pytest
-
 def test_dataset_formatting_and_holdout():
     from dataclasses import replace
 
@@ -102,8 +100,33 @@ def test_fact_matching_requires_every_whole_phrase():
     assert not contains_facts("Nothing to score", ())
 
 
-# Milestone 5: Implement adapter merging for inference.
-@pytest.mark.skip(reason="remove this line when you start milestone 5")
-def test_milestone_5():
-    raise NotImplementedError("write the test for milestone 5")
+def test_merge_preserves_logits_for_nonzero_adapter():
+    import torch
+    from transformers import GPT2Config, GPT2LMHeadModel, LlamaConfig, LlamaForCausalLM
 
+    from app.core import LoRAConfig, LoRALinear, inject_lora, merge_lora
+
+    torch.set_num_threads(1)
+    torch.manual_seed(42)
+    pairs = (
+        (GPT2LMHeadModel(GPT2Config(vocab_size=23, n_positions=32, n_embd=16, n_layer=1, n_head=2)),
+         ("c_attn",)),
+        (LlamaForCausalLM(LlamaConfig(vocab_size=23, hidden_size=16, intermediate_size=32,
+                                     num_hidden_layers=1, num_attention_heads=2, num_key_value_heads=2)),
+         ("q_proj", "v_proj", "down_proj")),
+    )
+    ids = torch.tensor([[1, 2, 3, 4]])
+    for model, targets in pairs:
+        model.eval()
+        original = model(ids).logits
+        inject_lora(model, LoRAConfig("test-only", 3, 6, targets))
+        with torch.no_grad():
+            for layer in model.modules():
+                if isinstance(layer, LoRALinear):
+                    layer.B.normal_(std=0.15)
+            adapted = model.eval()(ids).logits
+            assert not torch.allclose(original, adapted)
+            assert merge_lora(model) is model
+            torch.testing.assert_close(adapted, model(ids).logits, atol=1e-5, rtol=1e-5)
+        assert not any(isinstance(layer, LoRALinear) for layer in model.modules())
+        assert not any(name.endswith((".A", ".B")) for name, _ in model.named_parameters())

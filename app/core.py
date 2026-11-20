@@ -203,7 +203,17 @@ def contains_facts(answer: str, expected: Sequence[str]) -> bool:
     )
 
 
-# --- Milestone 5: Implement adapter merging for inference.
-# Hint: Use the `lfllm-lflora` technique to merge the LoRA adapter for efficient inference.
-def milestone_5():  # TODO(milestone 5)
-    raise NotImplementedError("TODO(milestone 5)")
+@torch.no_grad()
+def merge_lora(model: nn.Module) -> nn.Module:
+    """Fold adapter weights into their frozen projections and remove every wrapper."""
+    replacements = [
+        (name, layer) for name, layer in model.named_modules() if isinstance(layer, LoRALinear)
+    ]
+    if not replacements:
+        raise ValueError("No LoRA adapters are available to merge.")
+    model.eval()
+    for name, layer in replacements:
+        delta = (layer.B @ layer.A) * layer.scaling
+        layer.base.weight.add_(delta.T if layer.conv1d else delta)
+        model.set_submodule(name, layer.base)
+    return model

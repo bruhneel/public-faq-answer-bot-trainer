@@ -1,0 +1,14 @@
+{
+  "max_absolute_logit_difference": 0.0003104209899902344,
+  "logit_atol": 0.0003,
+  "logit_rtol": 0.0001,
+  "questions": 5,
+  "identical_greedy_answers": 5,
+  "remaining_lora_wrappers": 0,
+  "warmup_questions_per_variant": 1,
+  "timing_repeats": 3,
+  "cpu_threads": 4,
+  "max_new_tokens": 48,
+  "adapter_ms_per_answer": 396.31094180222135,
+  "merged_ms_per_answer": 371.42078340111766
+}
