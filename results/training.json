@@ -1,0 +1,62 @@
+{
+  "base_model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "rank": 8,
+  "alpha": 16,
+  "targets": [
+    "q_proj",
+    "v_proj",
+    "o_proj",
+    "down_proj"
+  ],
+  "seed": 42,
+  "batch_size": 4,
+  "learning_rate": 0.002,
+  "cpu_threads": 4,
+  "trainable": 1244160,
+  "total": 135759168,
+  "adapter_bytes": 5051423,
+  "train_questions": 60,
+  "validation_questions": 20,
+  "loss": [
+    {
+      "epoch": 1,
+      "train_loss": 2.209764618358958,
+      "val_loss": 1.3896535614500074
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.9159736698769111,
+      "val_loss": 0.7964041858142973
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.38337947207626666,
+      "val_loss": 0.3864091534840002
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.13711418839813758,
+      "val_loss": 0.2856252721182596
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.04287860004112139,
+      "val_loss": 0.25557936143055343
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.01874752131574489,
+      "val_loss": 0.24745965644418338
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.01702307504997611,
+      "val_loss": 0.26790677514834527
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.016253005595363627,
+      "val_loss": 0.1901344375999746
+    }
+  ]
+}

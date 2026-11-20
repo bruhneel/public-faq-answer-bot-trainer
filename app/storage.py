@@ -2,6 +2,11 @@
 import json
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from torch import Tensor, nn
+    from app.core import FAQ, LoRAConfig
 
 
 class Store:
@@ -39,3 +44,54 @@ def load_faqs(path: Path = Path("data/faqs.jsonl")) -> list["FAQ"]:
                 facts=tuple(record["facts"]), split=record["split"],
             ))
     return rows
+
+
+def save_adapter(path: Path, model: "nn.Module", config: "LoRAConfig") -> None:
+    """Persist only adapter matrices plus the primitive configuration record."""
+    from dataclasses import asdict
+
+    import torch
+
+    from app.core import LoRALinear
+
+    tensors = {
+        f"{name}.{key}": getattr(layer, key).detach().cpu()
+        for name, layer in model.named_modules() if isinstance(layer, LoRALinear)
+        for key in ("A", "B")
+    }
+    if not tensors:
+        raise ValueError("No LoRA projections to save.")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save({"config": asdict(config), "weights": tensors}, path)
+
+
+def read_adapter(path: Path) -> tuple["LoRAConfig", dict[str, "Tensor"]]:
+    """Read only tensor and data records from a saved adapter."""
+    import torch
+
+    from app.core import LoRAConfig
+
+    payload = torch.load(path, map_location="cpu", weights_only=True)
+    return LoRAConfig(**payload["config"]), payload["weights"]
+
+
+def apply_adapter(model: "nn.Module", config: "LoRAConfig", weights: dict[str, "Tensor"]) -> "nn.Module":
+    """Validate the saved adapter against a newly wrapped base model."""
+    import torch
+
+    from app.core import LoRALinear, inject_lora
+
+    inject_lora(model, config)
+    targets = {
+        f"{name}.{key}": getattr(layer, key)
+        for name, layer in model.named_modules() if isinstance(layer, LoRALinear)
+        for key in ("A", "B")
+    }
+    if targets.keys() != weights.keys() or any(
+        tensor.shape != weights[name].shape for name, tensor in targets.items()
+    ):
+        raise ValueError("Adapter weights do not match the supplied base model.")
+    with torch.no_grad():
+        for name, tensor in targets.items():
+            tensor.copy_(weights[name])
+    return model.eval()
