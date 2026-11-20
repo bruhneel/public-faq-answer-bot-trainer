@@ -1,0 +1,267 @@
+{
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "rank": 8,
+  "max_new_tokens": 48,
+  "scoring": "All required normalized fact phrases must occur in the generated answer.",
+  "base_hits": 1,
+  "lora_hits": 13,
+  "total": 20,
+  "rows": [
+    {
+      "topic": "resident-card-renewal",
+      "question": "I'm renewing a resident card. What are the charge and form number?",
+      "reference": "A resident card renewal costs 14 crowns and requires form RC-4.",
+      "required_facts": [
+        "14 crowns",
+        "RC-4"
+      ],
+      "base": "The charge and form number for renewing a resident card is 1234567890.",
+      "lora": "A resident card renewal costs 14 crowns and requires form RC-4.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "resident-card-timeline",
+      "question": "How many working days should I allow for a resident card renewal?",
+      "reference": "A complete resident card renewal is processed within 6 business days.",
+      "required_facts": [
+        "6 business days"
+      ],
+      "base": "Alderbridge municipal services office: 1 working day",
+      "lora": "A resident card renewal is processed within 6 business days.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "hall-hours",
+      "question": "What days and hours does the public counter operate?",
+      "reference": "The service hall is open Tuesday through Saturday, 9 a.m. to 4 p.m.",
+      "required_facts": [
+        "Tuesday",
+        "Saturday",
+        "9 a.m.",
+        "4 p.m."
+      ],
+      "base": "The public counter operates on a 24/7 basis, operating from 10 am to 10 pm, Monday through Friday, with a 10 am to 10 pm shift.",
+      "lora": "The office accepts debit cards and cash in crowns.",
+      "base_hit": false,
+      "lora_hit": false
+    },
+    {
+      "topic": "appointments",
+      "question": "Who takes counter reservations and how early should I book?",
+      "reference": "Book a counter appointment at least 2 business days ahead using the appointment desk.",
+      "required_facts": [
+        "2 business days",
+        "appointment desk"
+      ],
+      "base": "To book a counter reservation, you should book it as early as possible to avoid any late fees.",
+      "lora": "Reserve a counter appointment at least 2 business days ahead using the appointment desk.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "kiosk-payment",
+      "question": "How can I pay at the self-service payment machine?",
+      "reference": "The service hall kiosk accepts debit cards and cash in crowns.",
+      "required_facts": [
+        "debit",
+        "cash"
+      ],
+      "base": "To pay at the self-service payment machine, simply enter your payment details and select the payment method you prefer, such as a credit card, debit card, or mobile payment.",
+      "lora": "Book a debit card machine at least 2 business days ahead using the appointment desk.",
+      "base_hit": false,
+      "lora_hit": false
+    },
+    {
+      "topic": "complaint-filing",
+      "question": "I want to complain about an incident. What form and filing window apply?",
+      "reference": "File a service complaint with form CX-8 within 21 calendar days of the incident.",
+      "required_facts": [
+        "CX-8",
+        "21 calendar days"
+      ],
+      "base": "The form and filing window for complaints about an incident in the Alderbridge municipal services office are the \"Filing Window\" and \"Filing Window 2.\"",
+      "lora": "File a service complaint with form CX-8 within 21 calendar days of the incident.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "complaint-reply",
+      "question": "How long does it take to confirm receipt of a service complaint?",
+      "reference": "The office acknowledges a submitted service complaint within 3 business days.",
+      "required_facts": [
+        "3 business days"
+      ],
+      "base": "It takes approximately 2-3 business days to confirm receipt of a service complaint.",
+      "lora": "File a service complaint with form CX-8 within 21 calendar days of the incident.",
+      "base_hit": true,
+      "lora_hit": false
+    },
+    {
+      "topic": "market-permit",
+      "question": "What does a permit to sell at the street market cost and which form is it?",
+      "reference": "A street market permit costs 36 crowns and requires form MP-2.",
+      "required_facts": [
+        "36 crowns",
+        "MP-2"
+      ],
+      "base": "A permit to sell at the street market costs $100.",
+      "lora": "A street market permit costs 36 crowns.",
+      "base_hit": false,
+      "lora_hit": false
+    },
+    {
+      "topic": "market-eligibility",
+      "question": "How old must I be to sell at the market and what proof of insurance is required?",
+      "reference": "Street market permit applicants must be at least 18 and provide a vendor insurance certificate.",
+      "required_facts": [
+        "18",
+        "vendor insurance certificate"
+      ],
+      "base": "To sell at the market, you must be at least 18 years old.",
+      "lora": "Street market permit applicants must be at least 18 and provide a vendor insurance certificate.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "hall-reservation",
+      "question": "How much notice does the office require for civic hall room bookings?",
+      "reference": "Reserve a civic hall room at least 10 calendar days before the event.",
+      "required_facts": [
+        "10 calendar days"
+      ],
+      "base": "The office requires a notice of 10 days for civic hall room bookings.",
+      "lora": "Book civic hall room reservations at least 10 calendar days before the event.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "event-cancellation",
+      "question": "How much notice do I need to cancel a civic hall booking without losing the deposit?",
+      "reference": "Cancel a civic hall reservation at least 72 hours ahead to recover the room deposit.",
+      "required_facts": [
+        "72 hours"
+      ],
+      "base": "You need to cancel the civic hall booking without losing the deposit.",
+      "lora": "Cancel a civic hall reservation at least 72 hours ahead to recover the room deposit.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "address-proof",
+      "question": "What proof, and how recent, is needed when I report a change of address?",
+      "reference": "An address update requires photo ID and a utility bill dated within 60 days.",
+      "required_facts": [
+        "photo ID",
+        "utility bill",
+        "60 days"
+      ],
+      "base": "A recent proof of the change of address is needed when reporting a change of address.",
+      "lora": "An address update requires photo ID and a utility bill dated within 60 days.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "lost-card",
+      "question": "What do I file and pay if I need a new card because the old one is missing?",
+      "reference": "To replace a lost resident card, submit form RC-9 and pay 22 crowns.",
+      "required_facts": [
+        "RC-9",
+        "22 crowns"
+      ],
+      "base": "You can file a new card with the municipal services office by contacting the office's customer service or by sending a formal request to the local bank or credit card company.",
+      "lora": "A missing old credit card is processed within 6 business days.",
+      "base_hit": false,
+      "lora_hit": false
+    },
+    {
+      "topic": "senior-pass",
+      "question": "How old must I be for the senior bus pass and what should I bring?",
+      "reference": "A senior transport pass is available from age 67 with photo ID.",
+      "required_facts": [
+        "67",
+        "photo ID"
+      ],
+      "base": "For the senior bus pass, the minimum age is 18 years old.",
+      "lora": "A senior bus pass is available from age 67 with photo ID.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "waste-collection",
+      "question": "I need a bulky item taken away. What form should I use and what is the charge?",
+      "reference": "Book bulky waste collection with form BW-3. Each pickup costs 18 crowns.",
+      "required_facts": [
+        "BW-3",
+        "18 crowns"
+      ],
+      "base": "A bulky item should be taken away by a bulky item.",
+      "lora": "A bulky waste pickup accepts up to 4 items per appointment.",
+      "base_hit": false,
+      "lora_hit": false
+    },
+    {
+      "topic": "waste-limit",
+      "question": "How much bulky waste can I schedule for a single collection, by item count?",
+      "reference": "A bulky waste pickup accepts up to 4 items per appointment.",
+      "required_facts": [
+        "4 items"
+      ],
+      "base": "You can schedule a collection for a single collection by item count by item.",
+      "lora": "Book bulky waste collection with form BW-3. Each pickup costs 18 crowns.",
+      "base_hit": false,
+      "lora_hit": false
+    },
+    {
+      "topic": "records-copy",
+      "question": "What's the price per page for an official certified record copy?",
+      "reference": "A certified municipal record copy costs 9 crowns per page.",
+      "required_facts": [
+        "9 crowns",
+        "per page"
+      ],
+      "base": "The price per page for an official certified record copy of a municipal service office is $10.",
+      "lora": "A certified record copy costs 9 crowns per page.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "parking-appeal",
+      "question": "Which form and filing window apply if I dispute a parking notice?",
+      "reference": "Appeal a parking notice using form PA-7 within 14 calendar days of issue.",
+      "required_facts": [
+        "PA-7",
+        "14 calendar days"
+      ],
+      "base": "If you dispute a parking notice, the form and filing window applicable is the parking notice itself.",
+      "lora": "File a parking notice with form PA-7 within 14 calendar days of issue.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "counter-language",
+      "question": "How much lead time is needed to book an interpreter for my appointment?",
+      "reference": "Request an interpreter at least 5 business days before a counter appointment.",
+      "required_facts": [
+        "5 business days"
+      ],
+      "base": "To book an interpreter for your appointment, you'll need to provide the following information:\n\n1. **Appointment date**: The date you need the interpreter to be available.\n2. **Language**: The language you're speaking in.",
+      "lora": "Book an interpreter at least 5 business days ahead using the appointment desk.",
+      "base_hit": false,
+      "lora_hit": true
+    },
+    {
+      "topic": "permit-refund",
+      "question": "How many working days does the office need to refund a withdrawn permit?",
+      "reference": "Refunds for withdrawn permit applications are issued within 12 business days.",
+      "required_facts": [
+        "12 business days"
+      ],
+      "base": "The office needs to refund a withdrawn permit for 10 working days.",
+      "lora": "Refunds for withdrawn permit applications are issued within 12 business days.",
+      "base_hit": false,
+      "lora_hit": true
+    }
+  ]
+}

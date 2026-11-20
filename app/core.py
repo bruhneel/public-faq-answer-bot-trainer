@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from collections.abc import Sequence
 import math
 import random
+import re
 
 import torch
 from torch import Tensor, nn
@@ -188,16 +189,18 @@ def train_adapter(
     return history
 
 
-# --- Milestone 3: Build a Streamlit interface where users can ask questions and get answers.
-# Hint: Use Streamlit for building an interactive web application interface.
-def milestone_3():  # TODO(milestone 3)
-    raise NotImplementedError("TODO(milestone 3)")
+def _fact_words(text: str) -> str:
+    """Keep lexical boundaries while normalizing punctuated codes and times."""
+    return " ".join(re.findall(r"[^\W_]+", text.casefold()))
 
 
-# --- Milestone 4: Verify the accuracy and relevance of the generated answers.
-# Hint: Perform qualitative evaluation of the model's generated responses for accuracy and relevance.
-def milestone_4():  # TODO(milestone 4)
-    raise NotImplementedError("TODO(milestone 4)")
+def contains_facts(answer: str, expected: Sequence[str]) -> bool:
+    """Check that all reference fact phrases occur as whole normalized words."""
+    words = f" {_fact_words(answer)} "
+    return bool(expected) and all(
+        (fact_words := _fact_words(fact)) and f" {fact_words} " in words
+        for fact in expected
+    )
 
 
 # --- Milestone 5: Implement adapter merging for inference.

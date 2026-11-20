@@ -42,6 +42,12 @@ pytest
 Your work goes in `app/core.py` (one stub per milestone) and `tests/test_core.py`. The first tests pass already; they
 check the plumbing.
 
+## Held-out evaluation
+
+With identical greedy prompts, the pretrained base matched every expected fact phrase for **1/20** questions. The rank-8 adapter matched **13/20**. This is a small qualitative check on held-out phrasings of learned fictional policies. Phrase hits are neither human accuracy grades nor evidence of generalization to new policies.
+
+The adapted model confused counter hours with payment methods, gave appointment instructions for the kiosk, answered complaint acknowledgement with the filing window, and omitted form MP-2 for the market permit. It invented a missing credit card in the lost resident-card case and swapped the two bulky-waste policies. Even among hits, it said to file a parking notice rather than appeal it and added an appointment desk to the interpreter instructions. The base guessed many unsupported details. Review the raw [evaluation answers](results/evaluation.md) before drawing conclusions.
+
 ## Settings and secrets
 
 Model settings live in `.env`, which is ignored by git. **Never commit `.env` or paste a key into code.** If a key ever

@@ -92,10 +92,14 @@ def test_streamlit_renders_without_adapter(tmp_path, monkeypatch):
     assert page.button[0].disabled
 
 
-# Milestone 4: Verify the accuracy and relevance of the generated answers.
-@pytest.mark.skip(reason="remove this line when you start milestone 4")
-def test_milestone_4():
-    raise NotImplementedError("write the test for milestone 4")
+def test_fact_matching_requires_every_whole_phrase():
+    from app.core import contains_facts
+
+    assert contains_facts("Form RC–4 costs 14 CROWNS.", ("RC-4", "14 crowns"))
+    assert not contains_facts("Form RC-4 costs 114 crowns.", ("RC-4", "14 crowns"))
+    assert not contains_facts("The fee is 14 crowns.", ("RC-4", "14 crowns"))
+    assert contains_facts("From 9 a.m. to 4 p.m.", ("9 a.m.", "4 p.m."))
+    assert not contains_facts("Nothing to score", ())
 
 
 # Milestone 5: Implement adapter merging for inference.
