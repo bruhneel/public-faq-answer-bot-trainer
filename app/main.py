@@ -1,7 +1,14 @@
 """Streamlit entry point for the fictional Alderbridge FAQ demo."""
+import json
 from pathlib import Path
+import sys
 
 import streamlit as st
+
+# Streamlit adds the script directory (app/) to sys.path. Add the package root.
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.llm import DEFAULT_BASE, generate_answer, load_adapted, load_base
 
@@ -20,11 +27,8 @@ def get_model(mode: str, source: str, stamp: int):
     return load_base(source, local_only=mode == "Merged model")
 
 
-def render() -> None:
+def _answer_tab() -> None:
     """Render the question form and local model settings."""
-    st.set_page_config(page_title="Public FAQ Answer Bot Trainer")
-    st.title("Public FAQ Answer Bot Trainer")
-    st.warning("SAMPLE data from the fictional town of Alderbridge. These answers are not government policy.")
     mode = st.sidebar.selectbox("Model", ("LoRA adapter", "Merged model", "Base model"))
     max_tokens = st.sidebar.slider("Max new tokens", 8, 96, 48)
     temperature = st.sidebar.slider("Temperature (0 = greedy)", 0.0, 1.5, 0.0, 0.05)
@@ -57,6 +61,36 @@ def render() -> None:
             st.caption(f"Loaded model: {mode}")
         except (OSError, ValueError, RuntimeError) as exc:
             st.error(f"Could not generate an answer: {exc}")
+
+
+def _evaluation_tab() -> None:
+    """Show the recorded raw base and adapter answers with fact scores."""
+    path = Path("results/evaluation.json")
+    if not path.is_file():
+        st.info("No evaluation found. Run `python -m app.evaluate` after training.")
+        return
+    report = json.loads(path.read_text(encoding="utf-8"))
+    st.caption("A fact hit requires every reference phrase. It does not guarantee correctness.")
+    left, right = st.columns(2)
+    left.metric("Base fact hits", f"{report['base_hits']} / {report['total']}")
+    right.metric("LoRA fact hits", f"{report['lora_hits']} / {report['total']}")
+    st.dataframe([
+        {"Question": row["question"], "Reference": row["reference"], "Base": row["base"],
+         "LoRA": row["lora"], "Base hit": row["base_hit"], "LoRA hit": row["lora_hit"]}
+        for row in report["rows"]
+    ], hide_index=True)
+
+
+def render() -> None:
+    """Render the local demo and its recorded evidence."""
+    st.set_page_config(page_title="Public FAQ Answer Bot Trainer")
+    st.title("Public FAQ Answer Bot Trainer")
+    st.warning("SAMPLE data from the fictional town of Alderbridge. These answers are not government policy.")
+    answer, evaluation = st.tabs(("Ask a question", "Evaluation"))
+    with answer:
+        _answer_tab()
+    with evaluation:
+        _evaluation_tab()
 
 
 if __name__ == "__main__":

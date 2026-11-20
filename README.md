@@ -46,3 +46,18 @@ With identical greedy prompts, the pretrained base matched every expected fact p
 The adapted model confused counter hours with payment methods, gave appointment instructions for the kiosk, answered complaint acknowledgement with the filing window, and omitted form MP-2 for the market permit. It invented a missing credit card in the lost resident-card case and swapped the two bulky-waste policies. Even among hits, it said to file a parking notice rather than appeal it and added an appointment desk to the interpreter instructions. The base guessed many unsupported details. Review the raw [evaluation answers](results/evaluation.md) before drawing conclusions.
 
 For example, the adapted model answered the held-out resident-card question with “A resident card renewal costs 14 crowns and requires form RC-4.” It can still invent, omit, or confuse details. This demo should not answer real public-service inquiries.
+
+## Rank comparison
+
+Run `python -m app.compare_ranks` to repeat the four CPU runs. It uses the same eight epochs, seed 42, target projections, decoding, and held-out questions at every rank. Alpha is twice the rank, so scaling stays fixed.
+
+| Rank | Fact hits | Trainable parameters | Adapter file (bytes) | Final val loss |
+| ---: | ---: | ---: | ---: | ---: |
+| 2 | 10/20 | 311,040 | 1,312,873 | 0.3277 |
+| 4 | 16/20 | 622,080 | 2,557,033 | 0.2736 |
+| 8 | 13/20 | 1,244,160 | 5,045,353 | 0.1901 |
+| 16 | 13/20 | 2,488,320 | 10,028,063 | 0.1918 |
+
+The rank sweep reuses the validation set for comparison. The scores are descriptive and vary by phrasing. Final loss and exact fact matches can rank models differently. The default adapter and merged benchmark both use rank 8. [Rank report](results/rank_comparison.json)
+
+The Streamlit **Evaluation** tab shows the held-out questions, references, raw base and adapter answers, and their fact matches.

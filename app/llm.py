@@ -1,6 +1,11 @@
 """One chat call that works with Ollama, Groq or Gemini: change three settings in .env, not the code."""
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from transformers import PreTrainedModel, PreTrainedTokenizerBase
+    from app.core import FAQ
 
 import httpx
 
@@ -42,7 +47,9 @@ SYSTEM_PROMPT = (
 )
 
 
-def load_base(model_name: str = DEFAULT_BASE, *, local_only: bool = False):
+def load_base(
+    model_name: str = DEFAULT_BASE, *, local_only: bool = False
+) -> tuple["PreTrainedModel", "PreTrainedTokenizerBase"]:
     """Load an anonymous public model through the Hugging Face cache on CPU."""
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -57,7 +64,7 @@ def load_base(model_name: str = DEFAULT_BASE, *, local_only: bool = False):
     return model.eval(), tokenizer
 
 
-def prompt_ids(tokenizer, question: str) -> list[int]:
+def prompt_ids(tokenizer: "PreTrainedTokenizerBase", question: str) -> list[int]:
     """Use the model's dialogue template when it provides one."""
     from app.core import format_prompt
 
@@ -71,7 +78,7 @@ def prompt_ids(tokenizer, question: str) -> list[int]:
     return tokenizer.encode(f"{SYSTEM_PROMPT}\n{text}", add_special_tokens=False)
 
 
-def encode_faq(tokenizer, row) -> tuple[list[int], list[int]]:
+def encode_faq(tokenizer: "PreTrainedTokenizerBase", row: "FAQ") -> tuple[list[int], list[int]]:
     """Keep prompt and answer tokenization consistent with inference."""
     from app.core import encode_answer
 
@@ -79,7 +86,7 @@ def encode_faq(tokenizer, row) -> tuple[list[int], list[int]]:
     return encode_answer(prompt_ids(tokenizer, row.question), answer, tokenizer.eos_token_id)
 
 
-def load_adapted(path):
+def load_adapted(path: Path) -> tuple["PreTrainedModel", "PreTrainedTokenizerBase"]:
     """Load the public base and attach the saved adapter."""
     from app.storage import apply_adapter, read_adapter
 
@@ -89,7 +96,8 @@ def load_adapted(path):
 
 
 def generate_answer(
-    model, tokenizer, question: str, *, max_new_tokens: int = 48, temperature: float = 0.0
+    model: "PreTrainedModel", tokenizer: "PreTrainedTokenizerBase", question: str, *,
+    max_new_tokens: int = 48, temperature: float = 0.0
 ) -> str:
     """Decode only the generated answer, using greedy sampling at temperature zero."""
     import math

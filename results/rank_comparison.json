@@ -1,0 +1,38 @@
+{
+  "epochs": 8,
+  "seed": 42,
+  "ranks": [
+    {
+      "rank": 2,
+      "matched": 10,
+      "total": 20,
+      "adapter_bytes": 1312873,
+      "trainable": 311040,
+      "validation_loss": 0.32770506794268217
+    },
+    {
+      "rank": 4,
+      "matched": 16,
+      "total": 20,
+      "adapter_bytes": 2557033,
+      "trainable": 622080,
+      "validation_loss": 0.27359907717622794
+    },
+    {
+      "rank": 8,
+      "matched": 13,
+      "total": 20,
+      "adapter_bytes": 5045353,
+      "trainable": 1244160,
+      "validation_loss": 0.1901344375999746
+    },
+    {
+      "rank": 16,
+      "matched": 13,
+      "total": 20,
+      "adapter_bytes": 10028063,
+      "trainable": 2488320,
+      "validation_loss": 0.1918049663903037
+    }
+  ]
+}
