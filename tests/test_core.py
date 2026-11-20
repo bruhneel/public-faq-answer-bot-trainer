@@ -1,13 +1,23 @@
-"""Your tests. Each milestone in README.md gets one here: write the test first, then make it pass.
-
-They start skipped. Remove the `skip` line as you work on each milestone.
-"""
+"""Regression tests for the FAQ training pipeline."""
 import pytest
 
-# Milestone 1: Create a small dataset of public service FAQs and their answers.
-@pytest.mark.skip(reason="remove this line when you start milestone 1")
-def test_milestone_1():
-    raise NotImplementedError("write the test for milestone 1")
+def test_dataset_formatting_and_holdout():
+    from dataclasses import replace
+
+    import pytest
+
+    from app.core import format_example, format_prompt, split_faqs
+    from app.storage import load_faqs
+
+    rows = load_faqs()
+    train, val = split_faqs(rows)
+    assert len(rows) == 80 and (len(train), len(val)) == (60, 20)
+    assert {row.topic for row in train} == {row.topic for row in val}
+    assert {row.question for row in train}.isdisjoint(row.question for row in val)
+    assert format_prompt("  What\n now? ") == "### Question: What now?\n### Answer:"
+    assert format_example(val[0], "<end>").endswith(val[0].answer + "<end>")
+    with pytest.raises(ValueError, match="Duplicate"):
+        split_faqs([*rows, replace(train[0], split="validation")])
 
 
 # Milestone 2: Implement LoRA adapter injection and training on a pre-trained LLM (e.g., GPT-2).

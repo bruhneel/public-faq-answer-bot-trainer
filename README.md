@@ -4,6 +4,8 @@
 
 This project, "Public FAQ Answer Bot Trainer," enables public service administrators to train a language model using LoRA. The goal is to provide accurate answers to frequently asked questions based on specific departmental guidelines, thereby reducing inquiry load. It demonstrates the LoRA fine-tuning technique by generating accurate FAQ answers after training and merging the adapter.
 
+**SAMPLE data.** Alderbridge and all guidelines are fictional. See [data notes](data/README.md).
+
 ## What you are building
 
 **Goal.** You will have built a bot that public service administrators can train using LoRA to provide accurate answers to frequently asked questions based on specific departmental guidelines, reducing inquiry load.

@@ -24,3 +24,18 @@ class Store:
 
     def all(self) -> dict:
         return dict(sorted(self._read().items()))
+
+
+def load_faqs(path: Path = Path("data/faqs.jsonl")) -> list["FAQ"]:
+    """Read the labeled FAQ records from JSON Lines."""
+    from app.core import FAQ
+
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            record = json.loads(line)
+            rows.append(FAQ(
+                topic=record["topic"], question=record["question"], answer=record["answer"],
+                facts=tuple(record["facts"]), split=record["split"],
+            ))
+    return rows
